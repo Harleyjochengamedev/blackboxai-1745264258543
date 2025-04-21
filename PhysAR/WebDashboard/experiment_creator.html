@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhysAR Experiment Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+    <h1 class="text-3xl font-bold mb-6">PhysAR Experiment Creator</h1>
+    <form id="experimentForm" class="max-w-md bg-white p-6 rounded shadow">
+        <div class="mb-4">
+            <label for="experimentName" class="block mb-2 font-semibold">Experiment Name:</label>
+            <input type="text" id="experimentName" name="experimentName" required class="w-full border border-gray-300 rounded px-3 py-2" />
+        </div>
+        <div class="mb-4">
+            <label for="description" class="block mb-2 font-semibold">Description:</label>
+            <textarea id="description" name="description" rows="4" required class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="parameters" class="block mb-2 font-semibold">Parameters (JSON format):</label>
+            <textarea id="parameters" name="parameters" rows="6" placeholder='{"mass": 1.0, "angle": 45}' required class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Save Experiment</button>
+    </form>
+
+    <div id="result" class="mt-6 max-w-md"></div>
+
+    <script>
+        document.getElementById('experimentForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const experimentName = document.getElementById('experimentName').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const parametersText = document.getElementById('parameters').value.trim();
+
+            if (!experimentName || !description || !parametersText) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            let parameters;
+            try {
+                parameters = JSON.parse(parametersText);
+            } catch (e) {
+                alert('Parameters must be valid JSON.');
+                return;
+            }
+
+            const experimentData = {
+                name: experimentName,
+                description: description,
+                parameters: parameters
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/experiment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(experimentData)
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    document.getElementById('result').innerHTML = `<p class="text-green-600 font-semibold">Experiment saved successfully!</p>`;
+                    document.getElementById('experimentForm').reset();
+                } else {
+                    document.getElementById('result').innerHTML = `<p class="text-red-600 font-semibold">Failed to save experiment.</p>`;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p class="text-red-600 font-semibold">Error saving experiment.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
