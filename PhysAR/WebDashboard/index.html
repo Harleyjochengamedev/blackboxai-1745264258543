@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhysAR Leaderboard</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans p-6">
+    <h1 class="text-3xl font-bold mb-6">PhysAR Leaderboard</h1>
+    <div id="leaderboard" class="bg-white shadow rounded p-4">
+        <p>Loading leaderboard...</p>
+    </div>
+
+    <script>
+        async function fetchLeaderboard() {
+            try {
+                const response = await fetch('http://localhost:3000/leaderboard');
+                const data = await response.json();
+                const leaderboardDiv = document.getElementById('leaderboard');
+                if (data.leaderboard.length === 0) {
+                    leaderboardDiv.innerHTML = '<p>No scores yet.</p>';
+                    return;
+                }
+                let html = '<ol class="list-decimal list-inside">';
+                data.leaderboard.forEach((entry) => {
+                    html += `<li>${entry.name}: ${entry.score}</li>`;
+                });
+                html += '</ol>';
+                leaderboardDiv.innerHTML = html;
+            } catch (error) {
+                document.getElementById('leaderboard').innerHTML = '<p>Error loading leaderboard.</p>';
+            }
+        }
+
+        fetchLeaderboard();
+    </script>
+</body>
+</html>
