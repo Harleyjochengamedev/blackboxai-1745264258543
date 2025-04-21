@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhysAR Real-Time Statistics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+    <h1 class="text-3xl font-bold mb-6">PhysAR Real-Time Statistics</h1>
+    <div id="stats" class="max-w-md bg-white p-6 rounded shadow space-y-4">
+        <p>Loading statistics...</p>
+    </div>
+
+    <script>
+        async function fetchStats() {
+            try {
+                // Placeholder: Fetch stats from backend API
+                // For demo, generate random stats
+                const stats = {
+                    velocity: (Math.random() * 10).toFixed(2),
+                    acceleration: (Math.random() * 5).toFixed(2),
+                    energy: (Math.random() * 100).toFixed(2)
+                };
+
+                const statsDiv = document.getElementById('stats');
+                statsDiv.innerHTML = `
+                    <p><strong>Velocity:</strong> ${stats.velocity} m/s</p>
+                    <p><strong>Acceleration:</strong> ${stats.acceleration} m/s²</p>
+                    <p><strong>Energy:</strong> ${stats.energy} J</p>
+                `;
+            } catch (error) {
+                document.getElementById('stats').innerHTML = '<p class="text-red-600">Error loading statistics.</p>';
+            }
+        }
+
+        fetchStats();
+        setInterval(fetchStats, 5000); // Refresh every 5 seconds
+    </script>
+</body>
+</html>
